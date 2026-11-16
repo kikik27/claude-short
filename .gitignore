@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+package-lock.json.bak
+
+# Builds and Renders
+.remotion/
+out/
+*.mp4
+
+# OS generated
+.DS_Store
+Thumbs.db

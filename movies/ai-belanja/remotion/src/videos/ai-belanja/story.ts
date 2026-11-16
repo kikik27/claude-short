@@ -110,17 +110,16 @@ const S2b = (f: number) => dolly([3.1, 2.0, 2.6], [0.3, 1.3, -2.6], pushK(f, B(2
 // shot 3 (wallet CU): Dots floats in front of Zaky holding the wallet
 const S3a = (f: number) => dolly([0.6, 1.8, 2.0], [0.65, 1.45, -1.4], pushK(f, B(3)[0], 0.0022), { fov: 38 });
 const S3b = (f: number) => dolly([0.35, 1.75, 1.6], [0.7, 1.45, -1.4], pushK(f, F(WALLET_T), 0.002, 0.005, 30), { fov: 36, roll: 0.03 });
-// shot 4 (digital sky): wide over the platform -> cards close -> the pick -> cart
-const S4a = (f: number) => dolly([24, 12, 16], [24, 9.6, -0.5], pushK(f, B(4)[0], 0.0015), { fov: 44 });
+// shot 4 (digital sky): zoom in to phone during voice chat -> 3 rice cookers comparison -> pick to cart
+const S4a = (f: number) => dolly([24, 10.3, 10.8], [24, 10.0, 7.2], pushK(f, B(4)[0], 0.0018), { fov: 32 });
 const S4b = (f: number) => dolly([22.6, 10.2, 4.6], [24, 9.8, -1.2], pushK(f, F(COMPARE_T), 0.002), { fov: 38, roll: -0.03 });
 const S4c = (f: number) => dolly([26.5, 9.6, 6.5], [24, 9.0, 0.8], pushK(f, F(PICK_T), 0.0022, 0.005, 28), { fov: 36, roll: 0.03 });
 // shot 5 (phone approval CU): big phone, fingerprint, finger taps at TAP_T
 const S5a = (f: number) => dolly([0.6, 1.55, 0.9], [0.6, 1.5, -1.2], pushK(f, B(5)[0], 0.002), { fov: 30 });
 const S5b = (f: number) => dolly([0.6, 1.5, 0.35], [0.6, 1.5, -1.2], pushK(f, F(TAP_T), 0.0018, 0.006, 24), { fov: 28 });
-// shot 6 (token): card flips into a gold token at TOKEN_T — close enough that the
-// 0.5 m card / 0.44 m token read (frame ~0.9 m tall at the subject)
-const S6a = (f: number) => dolly([2.6, 1.9, 0.9], [0.6, 1.5, -1.2], pushK(f, B(6)[0], 0.0018), { fov: 36, roll: -0.02 });
-const S6b = (f: number) => dolly([2.3, 1.8, 0.5], [0.6, 1.5, -1.2], pushK(f, F(TOKEN_T), 0.002, 0.005, 28), { fov: 34, roll: 0.02 });
+// shot 6 (token): Zaky holding the card, flips into gold token with security relayer
+const S6a = (f: number) => dolly([2.2, 1.7, 0.6], [0.6, 1.35, -1.5], pushK(f, B(6)[0], 0.0018), { fov: 36, roll: -0.02 });
+const S6b = (f: number) => dolly([2.0, 1.6, 0.2], [0.6, 1.35, -1.5], pushK(f, F(TOKEN_T), 0.002, 0.005, 28), { fov: 34, roll: 0.02 });
 // shot 7 (golden street): two houses span 11.5 m, so the wide sits ~22 m back;
 // the clock floats at y 3.8 so it stays in frame on the closer shot
 const S7a = (f: number) => dolly([-24, 4.5, 20], [-24, 2, -2], pushK(f, B(7)[0], 0.0012), { fov: 50 });

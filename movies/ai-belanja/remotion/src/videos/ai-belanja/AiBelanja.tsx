@@ -19,6 +19,8 @@ import { LensBlur, GrainEffect } from "./lensblur";
 import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./grade";
 import { Kit } from "./build";
 import { TOTAL, FLASH_AT, SHOTS, layersAt, dofAt } from "./story";
+import { Subtitles } from "./Subtitles";
+import { SceneOverlays } from "./SceneOverlays";
 
 export const AI_BELANJA_FRAMES = TOTAL;
 
@@ -60,7 +62,16 @@ const Inner: React.FC<{ id: number; kit: Kit }> = ({ id, kit }) => {
     grade: new GradeEffect(GRADES.day, GRADE_STRENGTH.day),
     grain: new GrainEffect({ amount: 0.025, cellPx: 1.5 }), // film grain, OFF by default (inputProps post.grain): the reference measures no grain and it quadruples the file size
   }), [camera, scene]);
-  useEffect(() => () => fx.ink.dispose(), [fx]);
+  useEffect(() => {
+    const ink = fx.ink;
+    return () => {
+      if (typeof ink.dispose === "function") {
+        ink.dispose();
+      } else {
+        InkPass.prototype.dispose.call(ink);
+      }
+    };
+  }, [fx]);
   // EffectComposer's children type is Element (not Element | null) in this
   // @react-three/postprocessing version, so build the list conditionally.
   const post = useMemo(() => {
@@ -109,10 +120,13 @@ export const AiBelanjaShort: React.FC = () => {
   const kit = useKit();
   if (!kit) return null;
   const flash = f >= FLASH_AT && f < FLASH_AT + 4 ? [1, 0.75, 0.45, 0.2][f - FLASH_AT] : 0;
+  const time = f / 30;
   return (
     <AbsoluteFill style={{ background: "#cfe3f2" }}>
       {layersAt(f).map((l, i) => <ShotView key={i ? "over" : "base"} id={l.id} kit={kit} alpha={l.alpha} />)}
       {flash > 0 && <AbsoluteFill style={{ background: "#ffffff", opacity: flash }} />}
+      <SceneOverlays time={time} />
+      <Subtitles time={time} />
     </AbsoluteFill>
   );
 };

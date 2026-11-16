@@ -424,7 +424,7 @@ const hatOn = (p: Pen, o: Outfit, hp: P2[], H: Blob, cx: number, hc: number, lig
 // ---------------- bodies ----------------
 export type Arms = [P2[], P2[]];
 /** held prop; for the hammer the number is the strike 0 (raised) .. 1 (struck) */
-export type Prop = null | "icecream" | "shako" | ["hammer", number];
+export type Prop = null | "icecream" | "shako" | ["hammer", number] | "card";
 
 const BUILD: Record<Build, { a: number; torso: number; legs: number; tw: number }> = {
   adult: { a: 118, torso: 1.1, legs: 1.4, tw: 0.8 },
@@ -510,8 +510,13 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
   const rifle = !!o.rifle && (mode === "march" || mode === "stand" || mode === "stroll");
   type Arm = { pts: [P2, P2, P2]; front: boolean };
   const arms: Arm[] = [];
-  if (mode === "sit") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
-  else if (mode === "fall") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 12 * u), sh(side)[1] - 0.25 * HH], [tcx + side * (1.3 * T.a + 24 * u), sh(side)[1] - 0.68 * HH]], front: false });
+  if (prop === "card") {
+    const cy = chin + 0.42 * HH;
+    arms.push({ pts: [sh(-1), [tcx - 1.15 * T.a, sh(-1)[1] + 0.35 * HH], [tcx - 0.62 * T.a, cy]], front: true });
+    arms.push({ pts: [sh(1), [tcx + 1.15 * T.a, sh(1)[1] + 0.35 * HH], [tcx + 0.62 * T.a, cy]], front: true });
+  } else if (mode === "sit") {
+    for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.1 * T.a + 6 * u), sh(side)[1] + 0.4 * HH], [tcx + side * (1.2 * T.a + 10 * u), torsoBot + 0.04 * HH]], front: false });
+  } else if (mode === "fall") for (const side of [-1, 1]) arms.push({ pts: [sh(side), [tcx + side * (1.15 * T.a + 12 * u), sh(side)[1] - 0.25 * HH], [tcx + side * (1.3 * T.a + 24 * u), sh(side)[1] - 0.68 * HH]], front: false });
   else {
     arms.push({ pts: prop === "shako" ? hang(-1, 0) : hang(-1, -sw), front: false });
     if (rifle) {
@@ -584,6 +589,29 @@ export const bodyFront = (p: Pen, o: Outfit, opts: FrontOpts) => {
       p.poly(Rh([[hx - 12 * u, hy - 58 * u], [hx + 20 * u, hy - 58 * u], [hx + 20 * u, hy - 42 * u], [hx - 12 * u, hy - 42 * u]]), "#7d848c", 2.2 * u);
       p.dot(hx, hy, 5.5 * u);
     }
+  }
+  if (prop === "card") {
+    const cardCx = tcx;
+    const cardCy = chin + 0.42 * HH;
+    const cardW = 1.35 * T.a;
+    const cardH = 0.63 * cardW;
+    p.poly([
+      [cardCx - cardW / 2, cardCy - cardH / 2],
+      [cardCx + cardW / 2, cardCy - cardH / 2],
+      [cardCx + cardW / 2, cardCy + cardH / 2],
+      [cardCx - cardW / 2, cardCy + cardH / 2]
+    ], "#1d4ed8", 2.5 * u);
+    p.poly([
+      [cardCx - cardW * 0.36, cardCy - cardH * 0.25],
+      [cardCx - cardW * 0.16, cardCy - cardH * 0.25],
+      [cardCx - cardW * 0.16, cardCy + cardH * 0.08],
+      [cardCx - cardW * 0.36, cardCy + cardH * 0.08]
+    ], "#facc15", 1.5 * u);
+    p.dot(cardCx - cardW * 0.15, cardCy + cardH * 0.25, 2.2 * u, "#ffffff");
+    p.dot(cardCx, cardCy + cardH * 0.25, 2.2 * u, "#ffffff");
+    p.dot(cardCx + cardW * 0.15, cardCy + cardH * 0.25, 2.2 * u, "#ffffff");
+    p.dot(arms[0].pts[2][0], arms[0].pts[2][1], 5.5 * u, skin);
+    p.dot(arms[1].pts[2][0], arms[1].pts[2][1], 5.5 * u, skin);
   }
   if (prop === "shako") { // carried by the left hand
     const [hx, hy] = arms[0].pts[2];

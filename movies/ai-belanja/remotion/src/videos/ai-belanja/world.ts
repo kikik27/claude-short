@@ -13,6 +13,7 @@ import { NOINK } from "./ink";
 import { Pool, Actor, Fx, stage } from "./cast";
 import { FPS, D0, SHOTS, camAt, V3, smooth, ShotDef } from "./story";
 import { tokenU } from "./story";
+import { drawChatGPTLogo } from "./logos";
 
 /** no external kit in this project: loadKit resolves an empty kit (props are primitives) */
 export const loadKit = () => Promise.resolve({} as Kit);
@@ -32,14 +33,74 @@ const haloTex = () => ctex("sunHalo", 256, 256, (g) => {
   }
   g.putImageData(im, 0, 0);
 });
-/** painted card face: blue card, gold chip, light stripe — no text */
+/** painted card face: authentic ChatGPT Wallet credit card */
 const cardFaceTex = () => ctex("cardFace", 512, 320, (g) => {
-  g.fillStyle = "#1e40af"; g.fillRect(0, 0, 512, 320);
-  g.fillStyle = "#2563eb"; g.fillRect(0, 200, 512, 120);
-  g.fillStyle = "#e8c45a"; g.fillRect(48, 56, 84, 62);
-  g.strokeStyle = "#b8933a"; g.lineWidth = 5; g.strokeRect(48, 56, 84, 62);
-  g.fillStyle = "#bfdbfe"; g.fillRect(48, 250, 200, 22);
-  g.fillStyle = "#93c5fd"; g.fillRect(300, 250, 120, 22);
+  // Sleek black and emerald gradient
+  const gr = g.createLinearGradient(0, 0, 512, 320);
+  gr.addColorStop(0, "#065f46");
+  gr.addColorStop(0.6, "#047857");
+  gr.addColorStop(1, "#10b981");
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 512, 320);
+
+  // Decorative sleek metallic ring
+  g.strokeStyle = "rgba(255, 255, 255, 0.4)";
+  g.lineWidth = 3;
+  g.beginPath();
+  g.arc(460, 60, 160, 0, Math.PI * 2);
+  g.stroke();
+
+  // ChatGPT Logo & Branding
+  drawChatGPTLogo(g, 450, 48, 28, "#ffffff");
+  g.fillStyle = "#ffffff";
+  g.font = "bold 20px 'Segoe UI', sans-serif";
+  g.textAlign = "right";
+  g.fillText("ChatGPT Wallet", 405, 56);
+
+  // Gold EMV Chip
+  g.fillStyle = "#f59e0b";
+  g.fillRect(48, 80, 75, 55);
+  g.strokeStyle = "#b45309";
+  g.lineWidth = 3;
+  g.strokeRect(48, 80, 75, 55);
+  // Chip circuit traces
+  g.beginPath();
+  g.moveTo(48, 107); g.lineTo(123, 107);
+  g.moveTo(85, 80); g.lineTo(85, 135);
+  g.stroke();
+
+  // Contactless waves
+  g.strokeStyle = "rgba(255, 255, 255, 0.8)";
+  g.lineWidth = 3;
+  g.beginPath();
+  g.arc(150, 107, 12, -Math.PI / 3, Math.PI / 3);
+  g.stroke();
+  g.beginPath();
+  g.arc(150, 107, 20, -Math.PI / 3, Math.PI / 3);
+  g.stroke();
+
+  // Card Number (masked)
+  g.fillStyle = "#ffffff";
+  g.font = "bold 24px monospace";
+  g.textAlign = "left";
+  g.fillText("••••   ••••   ••••   9821", 48, 205);
+
+  // Cardholder name & Expiry
+  g.fillStyle = "#94a3b8";
+  g.font = "12px sans-serif";
+  g.fillText("CARDHOLDER", 48, 248);
+  g.fillText("EXPIRES", 240, 248);
+
+  g.fillStyle = "#ffffff";
+  g.font = "bold 16px sans-serif";
+  g.fillText("ZAKY", 48, 274);
+  g.fillText("11/29", 240, 274);
+
+  // Mastercard / Visa emblem
+  g.fillStyle = "#ef4444";
+  g.beginPath(); g.arc(430, 260, 24, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#f59e0b";
+  g.beginPath(); g.arc(460, 260, 24, 0, Math.PI * 2); g.fill();
 });
 
 type Mats = Record<string, THREE.Material>;
@@ -181,13 +242,6 @@ export class World {
     // ---- floating sky platform at (24, 8, 0) ----
     const plat = new THREE.CylinderGeometry(4, 3.4, 0.4, 48); plat.translate(0, -0.2, 0);
     b.add(plat, M.isleTop, new THREE.Matrix4().makeTranslation(24, 8, 0));
-    // cart / basket at (24, 8.4, 1.6)
-    b.add(boxGeo(V(23.55, 8.4, 1.3), V(24.45, 8.48, 1.9), 0), M.basketDark);        // bottom
-    b.add(boxGeo(V(23.55, 8.48, 1.3), V(23.63, 8.85, 1.9), 0), M.basket);           // side -x
-    b.add(boxGeo(V(24.37, 8.48, 1.3), V(24.45, 8.85, 1.9), 0), M.basket);           // side +x
-    b.add(boxGeo(V(23.55, 8.48, 1.3), V(24.45, 8.85, 1.38), 0), M.basket);          // side -z
-    b.add(boxGeo(V(23.55, 8.48, 1.82), V(24.45, 8.85, 1.9), 0), M.basket);          // side +z
-    b.add(boxGeo(V(23.5, 8.85, 1.25), V(24.5, 8.92, 1.95), 0), M.basketDark);       // rim
 
     // ---- golden street: grass, two houses, package, dotted path ----
     // grass extends to z 24 so the wide shot's foreground is lawn, not bare ground
@@ -215,7 +269,7 @@ export class World {
 
     // ---- card + token (shot 6, posed per frame) ----
     const face = new THREE.MeshLambertMaterial({ map: cardFaceTex() });
-    const edge = new THREE.MeshLambertMaterial({ color: "#17255e" });
+    const edge = new THREE.MeshLambertMaterial({ color: "#065f46" });
     this.cardMats = [edge, edge, edge, edge, face, edge];
     this.cardMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.32, 0.02), this.cardMats);
     this.cardMesh.castShadow = true; this.cardMesh.visible = false;
@@ -317,18 +371,9 @@ export class World {
       m.lookAt(cam.position.x, m.position.y, cam.position.z);
       mat.map = this.cloudMaps[s.light][i % 4];
     }
-    // ---- card -> token (shot 6 only) ----
-    const tu = tokenU(t);
-    const inTokenShot = id === 6;
-    this.cardMesh.visible = inTokenShot && tu < 0.55;
-    this.tokenMesh.visible = inTokenShot && tu >= 0.45;
-    if (inTokenShot) {
-      const bob = 0.03 * Math.sin(t * 2.4);
-      this.cardMesh.position.set(0.6, 1.5 + bob, -1.2);
-      this.cardMesh.rotation.set(0, tu * Math.PI * 2, 0.08 * Math.sin(t * 1.7));
-      this.tokenMesh.position.set(0.6, 1.5 + bob + 0.05 * tu, -1.2);
-      this.tokenMesh.rotation.set(Math.PI / 2, 0, t * 1.6);
-    }
+    // ---- card -> token (shot 6: hidden so character physically holds card) ----
+    this.cardMesh.visible = false;
+    this.tokenMesh.visible = false;
     // ---- cast + effects ----
     const right = V(0, 0, 0).setFromMatrixColumn(cam.matrixWorld, 0);
     const st = stage(id, t, { pos: cam.position, right });
